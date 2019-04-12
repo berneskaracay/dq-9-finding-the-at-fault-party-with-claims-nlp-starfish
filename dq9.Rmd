@@ -1,0 +1,160 @@
+---
+jupyter:
+  jupytext:
+    formats: ipynb,Rmd
+    text_representation:
+      extension: .Rmd
+      format_name: rmarkdown
+      format_version: '1.0'
+      jupytext_version: 1.0.5
+  kernelspec:
+    display_name: Python 3
+    language: python
+    name: python3
+---
+
+```{python}
+#######################################
+print('Setting everything up...')
+#######################################
+
+import warnings
+warnings.filterwarnings('ignore')
+
+import pandas as pd
+import numpy as np
+import matplotlib
+import matplotlib.pyplot as plt
+import matplotlib.lines as mlines
+from matplotlib.lines import Line2D
+
+import matplotlib.ticker as ticker
+import matplotlib.cm as cm
+import matplotlib as mpl
+
+import matplotlib.pyplot as plt
+# %matplotlib inline
+import seaborn as sns
+
+
+import os
+import sys
+import mysql.connector
+from datetime import datetime
+from datetime import date
+from datetime import time
+from datetime import timedelta
+
+
+import seaborn as sns
+plt.style.use('ggplot')
+pd.options.display.max_rows = 999
+pd.options.display.max_columns = 100
+pd.options.display.max_colwidth = 100
+import spacy
+
+
+import nltk
+from nltk import word_tokenize
+from nltk.corpus import stopwords
+# stop = stopwords.words('english')
+nlp = spacy.load('en_core_web_sm')
+
+from IPython.display import HTML as html_print
+
+def cstr(s, color='black'):
+    return "<text style=color:{}>{}</text>".format(color, s)
+
+
+print('done.')
+
+```
+
+```{python}
+
+```
+
+```{python}
+general_data = pd.read_csv("data/NSS_DS_data.thegeneral.csv")
+```
+
+```{python}
+general_data.shape
+```
+
+```{python}
+
+general_data.describe(include='all')
+```
+
+```{python}
+general_data.info()
+```
+
+```{python}
+general_data.isnull().sum(axis = 0)
+
+
+
+```
+
+```{python}
+general_data.head()
+```
+
+```{python}
+general_data.nunique()
+```
+
+```{python}
+general_data.groupby('ClaimGroup').count()
+```
+
+```{python}
+general_data.groupby('SeverityTypeName').count()
+```
+
+```{python}
+general_data["AccidentDescription"].head()
+```
+
+```{python}
+
+general_data["ClaimLevelBody"][2]
+```
+
+```{python}
+general_data["ExposureLevelBody"][2]
+```
+
+```{python}
+general_data['FaultRatingName'].value_counts().plot.bar(title="Freq dist of Fault Rating")
+```
+
+```{python}
+atfault= pd.read_csv("data\\NSS_DS_data.thegeneral.csv", dtype=str) #header=None, parse_dates=True, usecols=range(0,20), low_memory=False)|
+```
+
+```{python}
+# !pip install jupytext --upgrade
+```
+
+```{python}
+
+```
+
+```{python}
+
+```
+
+```{python}
+
+```
+
+```{python}
+
+```
+
+```{python}
+
+```
