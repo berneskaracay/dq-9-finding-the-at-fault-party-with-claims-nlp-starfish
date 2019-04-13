@@ -45,7 +45,7 @@ from datetime import datetime
 from datetime import date
 from datetime import time
 from datetime import timedelta
-
+from wordcloud import WordCloud, STOPWORDS, ImageColorGenerator
 
 import seaborn as sns
 plt.style.use('ggplot')
@@ -129,9 +129,9 @@ general_data['FaultRatingName'].value_counts().plot.bar(title="Freq dist of Faul
 ```
 
 ```{python}
-general_data.AccidentDescription=atfault.AccidentDescription.str.replace('½ ', "")
+general_data.AccidentDescription=general_data.AccidentDescription.str.replace('½ ', "")
 
-general_data.AccidentDescription=atfault.AccidentDescription.str.replace('*', "")
+general_data.AccidentDescription=general_data.AccidentDescription.str.replace('*', "")
 
 general_data['AccidentDescription'].str.lower().str.split().head()
 
@@ -160,7 +160,48 @@ for source in general_data:
 df_dict=pd.DataFrame.from_dict(word_freq, orient='index').sort_values(0, ascending=False).reset_index().rename(columns={'index': 'AccidentDescription',0: 'Frequency'})
 
 
-df_dict.head(30)
+df_dict.head(1)
+```
+
+```{python}
+myData=df_dict.head(300)
+```
+
+```{python}
+myData
+```
+
+```{python}
+text=""
+for index, row in myData.iterrows():
+    str1=""
+    str1= (row['AccidentDescription']+" ")*row['Frequency']
+    text=text+str1
+```
+
+```{python}
+text[:100]
+```
+
+```{python}
+
+wordcloud = WordCloud(max_font_size=100, max_words=100, background_color="white", collocations = False).generate(text)
+plt.figure(figsize=(40,40))
+plt.imshow(wordcloud, interpolation="bilinear")
+plt.axis("off")
+plt.show()
+```
+
+```{python}
+# #!pip install wordcloud
+```
+
+```{python}
+
+```
+
+```{python}
+
 ```
 
 ```{python}
