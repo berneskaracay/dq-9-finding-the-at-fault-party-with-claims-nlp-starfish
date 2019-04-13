@@ -35,8 +35,9 @@ import matplotlib as mpl
 import matplotlib.pyplot as plt
 # %matplotlib inline
 import seaborn as sns
-
-
+import nltk
+nltk.download('punkt')
+nltk.download('stopwords')
 import os
 import sys
 import mysql.connector
@@ -67,10 +68,6 @@ def cstr(s, color='black'):
 
 
 print('done.')
-
-```
-
-```{python}
 
 ```
 
@@ -132,27 +129,38 @@ general_data['FaultRatingName'].value_counts().plot.bar(title="Freq dist of Faul
 ```
 
 ```{python}
-atfault= pd.read_csv("data\\NSS_DS_data.thegeneral.csv", dtype=str) #header=None, parse_dates=True, usecols=range(0,20), low_memory=False)|
-```
+general_data.AccidentDescription=atfault.AccidentDescription.str.replace('½ ', "")
 
-```{python}
-# !pip install jupytext --upgrade
-```
+general_data.AccidentDescription=atfault.AccidentDescription.str.replace('*', "")
 
-```{python}
+general_data['AccidentDescription'].str.lower().str.split().head()
 
-```
+stop = stopwords.words('english')
+general_data['AccidentDescription'] = general_data['AccidentDescription'].apply(lambda x: " ".join(x for x in x.split() if x not in stop))
+general_data.head()
 
-```{python}
+general_data['AccidentDescription'] = general_data['AccidentDescription'].str.replace('[^\w\s]','')
 
-```
 
-```{python}
+def custom_tokenize(text):
+    if not text:
+        print('Not text')
+        text = ''
+    return word_tokenize(text)
+general_data['AccidentDescription'] = general_data.AccidentDescription.apply(custom_tokenize)
 
-```
 
-```{python}
+from collections import defaultdict
+for source in general_data:
+    word_freq = defaultdict(int)
+    for text in general_data.AccidentDescription:
+        for word in text:
+            word_freq[word] += 1 
 
+df_dict=pd.DataFrame.from_dict(word_freq, orient='index').sort_values(0, ascending=False).reset_index().rename(columns={'index': 'AccidentDescription',0: 'Frequency'})
+
+
+df_dict.head(30)
 ```
 
 ```{python}
