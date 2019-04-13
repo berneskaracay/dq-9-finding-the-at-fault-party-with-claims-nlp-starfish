@@ -47,6 +47,21 @@ from datetime import time
 from datetime import timedelta
 from wordcloud import WordCloud, STOPWORDS, ImageColorGenerator
 
+
+
+from sklearn.model_selection import train_test_split
+from sklearn.linear_model import LogisticRegression
+from sklearn.naive_bayes import MultinomialNB
+from sklearn.feature_extraction.text import TfidfTransformer
+from sklearn.pipeline import Pipeline
+from sklearn.metrics import confusion_matrix,classification_report
+from sklearn.feature_extraction.text import CountVectorizer
+from sklearn.svm import SVC
+from sklearn import metrics
+from sklearn.feature_extraction.text import TfidfTransformer
+from sklearn.feature_extraction.text import TfidfVectorizer
+from sklearn.svm import LinearSVC
+
 import seaborn as sns
 plt.style.use('ggplot')
 pd.options.display.max_rows = 999
@@ -165,25 +180,17 @@ df_dict.head(1)
 
 ```{python}
 myData=df_dict.head(300)
-```
 
-```{python}
 myData
-```
 
-```{python}
 text=""
 for index, row in myData.iterrows():
     str1=""
     str1= (row['AccidentDescription']+" ")*row['Frequency']
     text=text+str1
-```
 
-```{python}
 text[:100]
-```
 
-```{python}
 
 wordcloud = WordCloud(max_font_size=100, max_words=100, background_color="white", collocations = False).generate(text)
 plt.figure(figsize=(40,40))
@@ -197,11 +204,111 @@ plt.show()
 ```
 
 ```{python}
+general_data = pd.concat([general_data, pd.get_dummies(general_data['FaultRatingName'])], axis=1)
 
 ```
 
 ```{python}
+general_data.tail()
+```
 
+```{python}
+def classifier(row):
+    if row["FaultRatingName"] == 'Insured at fault':
+        return 'Insured at fault'
+    elif row["FaultRatingName"] == 'Other party at fault':
+        return 'Other party at fault'
+    else:
+        return 'none'
+```
+
+```{python}
+    
+general_data["label"] = general_data.apply(classifier, axis=1)
+```
+
+```{python}
+general_data.head()
+```
+
+```{python}
+general_data['AccidentDescription'][10]
+```
+
+```{python}
+# Might take awhile...
+bows= CountVectorizer(tokenizer=lambda x: x, lowercase=False, ngram_range = (2,4)).fit(general_data['AccidentDescription'])
+#bow_transformer= CountVectorizer(ngram_range = (2,3)).fit(df['AccidentDescription'])
+```
+
+```{python}
+# Print total number of vocab words
+print(len(bows.vocabulary_))
+```
+
+```{python}
+words = general_data['AccidentDescription'][10]
+print(words)
+```
+
+```{python}
+vector_words = bows.transform([words])
+print(vector_words )
+print(vector_words.shape)
+```
+
+```{python}
+print(bows.get_feature_names()[46524])
+print(bows.get_feature_names()[446746])
+```
+
+```{python}
+vector_words_info = bows.transform(general_data['AccidentDescription'])
+```
+
+```{python}
+frequencies = sum(vector_words_info).toarray()[0]
+```
+
+```{python}
+df_freq =pd.DataFrame(frequencies, index = bows.get_feature_names(), columns = ['frequency'])
+df_freq=df_freq.sort_values('frequency', ascending = 'False')
+```
+
+```{python}
+
+```
+
+```{python}
+df_freq.tail()
+```
+
+```{python}
+myData=df_freq.tail(300)
+```
+
+```{python}
+myData
+```
+
+```{python}
+text=""
+for index, row in myData.iterrows():
+    str1=""
+    str1= (index+",")*row['frequency']
+    text=text+str1
+```
+
+```{python}
+text[:100]
+```
+
+```{python}
+wordcloud = WordCloud(max_font_size=100, max_words=100, background_color="white").generate(text)
+plt.figure(figsize=(40,40))
+plt.imshow(wordcloud, interpolation="bilinear")
+plt.axis("off")
+plt.show()
 ```
 
 ```{python}
